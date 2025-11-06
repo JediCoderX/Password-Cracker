@@ -6,11 +6,11 @@ import time
 import threading
 from queue import Queue, Empty
 
-CHUNK_SIZE = 10000
+CHUNK_SIZE = 50000
 REQUEST_TIMEOUT = 10
 
 CHARS = string.ascii_lowercase
-N = 26
+N = len(CHARS)
 
 
 def total_space(max_length):
@@ -63,7 +63,8 @@ def worker(hashed_password, max_length, chunk_queue, found_event, result, ports,
             with lock:
                 failures[port] = failures.get(port, 0) + 1
                 if failures[port] >= max_fail:
-                    print(f"Removing port {port} due to {failures[port]} failures.")
+                    print(
+                        f"Removing port {port} due to {failures[port]} failures.")
                     try:    # safe guard
                         ports.remove(port)
                     except ValueError:
@@ -108,8 +109,9 @@ def main():
     for port in ports:
         t = threading.Thread(
             target=worker,
-            args=(hashed_password, max_length, q, found_event, result, ports, lock, failures)
-            )
+            args=(hashed_password, max_length, q,
+                  found_event, result, ports, lock, failures)
+        )
         t.daemon = True
         t.start()
         threads.append(t)
@@ -126,10 +128,10 @@ def main():
 
     if found_event.is_set():
         print("Password found:", result.get('password'))
-        print("Time (s):", duration)
     else:
         print("Password not found (searched full space or services unavailable).")
-        print("Time (s):", duration)
+
+    print("Time (s):", duration)
 
 
 if __name__ == "__main__":

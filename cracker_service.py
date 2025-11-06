@@ -9,6 +9,7 @@ app = Flask(__name__)
 CHARS = string.ascii_lowercase
 N = len(CHARS)
 
+
 def index_to_password(idx, max_length):
     # Map a global index to the password string.
     if idx < 0:
@@ -30,6 +31,7 @@ def index_to_password(idx, max_length):
     # Out of range
     return None
 
+
 def brutefoce_password(hashed_password, max_length, start_index, end_index):
     for idx in range(start_index, end_index):
         pwd = index_to_password(idx, max_length)
@@ -38,6 +40,7 @@ def brutefoce_password(hashed_password, max_length, start_index, end_index):
         if hashlib.md5(pwd.encode()).hexdigest() == hashed_password:
             return pwd
     return None
+
 
 @app.route('/crack_chunk', methods=['POST'])
 def crack_chunk():
@@ -56,7 +59,7 @@ def crack_chunk():
 
     found = brutefoce_password(hashed, max_length, start_index, end_index)
     if found:
-        return jsonify({"found": True, "password": found})
+        return jsonify({"found": True, "password": found}), 200
     else:
         return jsonify({"found": False}), 200
 
